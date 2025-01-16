@@ -210,46 +210,114 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     // Function to delete itinerary
-// Function to delete itinerary
-function deleteItinerary(itineraryId) {
-    // Show a confirmation prompt
-    const isConfirmed = confirm("Are you sure you want to delete this itinerary?");
-    
-    // If the user confirms, proceed with the deletion
-    if (isConfirmed) {
-        fetch(`../PHP/delete_itinerary.php?id=${itineraryId}`, {
-            method: 'DELETE'
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (data.success) {
-                // Remove the deleted itinerary from the frontend
-                alert('Itinerary deleted successfully');
-                // Close the modal
-                document.getElementById('itinerary-modal').style.display = 'none';
-                // Optionally, remove the itinerary from the list if it's displayed elsewhere
-                const itineraryButton = document.querySelector(`[data-id="${itineraryId}"]`);
-                if (itineraryButton) {
-                    itineraryButton.remove(); // Remove the itinerary button
+    function deleteItinerary(itineraryId) {
+        // Show a confirmation prompt
+        const isConfirmed = confirm("Are you sure you want to delete this itinerary?");
+        
+        // If the user confirms, proceed with the deletion
+        if (isConfirmed) {
+            fetch(`../PHP/delete_itinerary.php?id=${itineraryId}`, {
+                method: 'DELETE'
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    // Remove the deleted itinerary from the frontend
+                    alert('Itinerary deleted successfully');
+                    // Close the modal
+                    document.getElementById('itinerary-modal').style.display = 'none';
+                    // Optionally, remove the itinerary from the list if it's displayed elsewhere
+                    const itineraryButton = document.querySelector(`[data-id="${itineraryId}"]`);
+                    if (itineraryButton) {
+                        itineraryButton.remove(); // Remove the itinerary button
+                    }
+                } else {
+                    alert('Error deleting itinerary');
                 }
-            } else {
-                alert('Error deleting itinerary');
-            }
-        })
-        .catch(error => {
-            console.error('Error deleting itinerary:', error);
-            alert('An error occurred while deleting the itinerary');
-        });
-    } else {
-        // If the user cancels, do nothing
-        console.log("Deletion cancelled");
+            })
+            .catch(error => {
+                console.error('Error deleting itinerary:', error);
+                alert('An error occurred while deleting the itinerary');
+            });
+        } else {
+            // If the user cancels, do nothing
+            console.log("Deletion cancelled");
+        }
     }
-}
 
-// Adding event listener to the delete button inside the modal
-document.getElementById('delete-itinerary').addEventListener('click', function() {
-    const itineraryId = data.itinerary.id; // Get the itinerary ID from the modal data
-    deleteItinerary(itineraryId);
+    // Adding event listener to the delete button inside the modal
+    document.getElementById('delete-itinerary').addEventListener('click', function() {
+        const itineraryId = data.itinerary.id; // Get the itinerary ID from the modal data
+        deleteItinerary(itineraryId);
+    });
+
 });
 
+document.addEventListener("DOMContentLoaded", () => {
+    const daysInput = document.getElementById("duration-days");
+    const nightsInput = document.getElementById("duration-nights");
+    const errorDiv = document.getElementById("duration-error");
+    const submitButton = document.getElementById("submit-button");
+
+    // Consolidated validation function
+    function validateDuration() {
+        const days = parseInt(daysInput.value, 10);
+        const nights = parseInt(nightsInput.value, 10);
+
+        console.log("Days:", days, "Nights:", nights); // Debugging log
+
+        // Check if both fields are filled in
+        if (isNaN(days) || isNaN(nights)) {
+            errorDiv.style.display = "none"; // Do not show the error if inputs are incomplete
+            submitButton.disabled = true; // Disable the submit button until both fields are filled
+        } else if (days <= nights || nights !== days - 1) {
+            errorDiv.style.display = "block"; // Show the error message for invalid duration
+            submitButton.disabled = true; // Disable the submit button for invalid inputs
+        } else {
+            errorDiv.style.display = "none"; // Hide the error message for valid duration
+            submitButton.disabled = false; // Enable the submit button for valid inputs
+        }
+    }
+
+    // Single event listener for both inputs
+    [daysInput, nightsInput].forEach(input => {
+        input.addEventListener("input", validateDuration);
+    });
+
+    // Validate on page load in case of pre-filled values
+    validateDuration();
+});
+
+document.addEventListener("DOMContentLoaded", () => {
+    const destinationInput = document.getElementById("destination");
+    const destinationError = document.getElementById("destination-error");
+
+    destinationInput.addEventListener("keyup", () => {
+        const value = destinationInput.value;
+        const specialCharRegex = /^[^a-zA-Z0-9]/; // Matches if the first character is not a letter or digit
+
+        // Show the error immediately if the first character is a space or a special character
+        if (value.startsWith(" ") || specialCharRegex.test(value)) {
+            destinationError.style.display = "block";
+        } else {
+            destinationError.style.display = "none";
+        }
+    });
+
+    destinationInput.addEventListener("blur", () => {
+        const value = destinationInput.value.trim();
+        const specialCharRegex = /^[^a-zA-Z0-9]/; // Matches if the first character is not a letter or digit
+
+        // Show the error if the input has only one character or starts with a special character
+        if (value.length === 1 || specialCharRegex.test(value)) {
+            destinationError.style.display = "block";
+        } else {
+            destinationError.style.display = "none";
+        }
+    });
+});
+
+const submitButton = document.querySelector("#submit-button");
+destinationInput.addEventListener("keyup", () => {
+    submitButton.disabled = isInvalid;
 });

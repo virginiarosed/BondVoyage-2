@@ -274,7 +274,7 @@ document.addEventListener('DOMContentLoaded', function () {
     <p><strong>Description:<br></strong> ${place.description}</p>
     <p><strong>Activities:</strong> ${place.activitiesHtml}</p>
     <div class="images">
-        ${place.images.map(image => `<img src="/for_project/${image}" alt="Place image" class="place-image">`).join('')}
+    ${place.images.map(image => `<img src="../uploads/${image}" alt="Place image" class="place-image">`).join('')}
     </div>
 `;
 

@@ -35,8 +35,57 @@
                     <img src="../Images/admin_title.png" alt="Admin Title">
                 </div>
             </div>
+
+            <div class="button-container">
+                <div class="button" id="usersButton">
+                    <a href="../Admin_HTML/bv_users.html">
+                        <img src="../Images/bv_users.png" alt="Users Icon">
+                        <span>Users</span>
+                        <div id="usersCount"></div>
+                    </a>
+                </div>
+                <div class="button" id="usersItineraryButton">
+                    <a href="../Admin_HTML/bv_usersitinerary.html">
+                        <img src="../Images/bv_usersitinerary.png" alt="Users Itinerary Icon">
+                        <span>User's Itinerary</span>
+                        <div id="usersItineraryCount"></div>
+                    </a>
+                </div>
+                <div class="button" id="standardItineraryButton">
+                    <a href="../Admin_HTML/bv_standard.html">
+                        <img src="../Images/bv_standard.png" alt="Standard Itinerary Icon">
+                        <span>Standard Itinerary</span>
+                        <div id="standardItineraryCount"></div>
+                    </a>
+                </div>
+                <div class="button" id="feedbackButton">
+                    <a href="../Admin_HTML/bv_feedbackrecord.html">
+                        <img src="../Images/bv_feedback.png" alt="Feedback Icon">
+                        <span>Feedback</span>
+                        <div id="feedbackCount"></div>
+                    </a>
+                </div>
+            </div>
         </main>
     </div>
+
+    <script>
+        function fetchCounts(endpoint, elementId) {
+            fetch(endpoint)
+                .then(response => response.json())
+                .then(data => {
+                    document.getElementById(elementId).innerText = data.count;
+                })
+                .catch(error => console.error(`Error fetching count for ${elementId}:`, error));
+        }
+    
+        window.onload = function() {
+            fetchCounts('../PHP/fetch_users_count.php', 'usersCount');
+            fetchCounts('../PHP/fetch_users_itinerary_count.php', 'usersItineraryCount');
+            fetchCounts('../PHP/fetch_standard_itinerary_count.php', 'standardItineraryCount');
+            fetchCounts('../PHP/fetch_feedback_count.php', 'feedbackCount');
+        };
+    </script>    
 
     <script>
         document.addEventListener('DOMContentLoaded', () => {
